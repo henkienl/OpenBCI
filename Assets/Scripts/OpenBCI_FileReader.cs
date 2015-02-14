@@ -1,25 +1,34 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Threading;
 
 public class OpenBCI_FileReader : MonoBehaviour {
 
 	Thread fileReadThread; // Declare thread for file reading
 	public OpenBCI_Sample sample; // This is where the resulting sample will be written to every frame
-	public string fileLocation = "c:\\test\\test.txt"; // The file with samples to be read from
+	public string fileLocation; // The file with samples to be read from
 	public int skipFirstXSeconds = 0; // Skip the first amount of lines from the file, in seconds
 	private float sampleRate = 250.0f;
+	public float currentData;
 	System.IO.StreamReader file; // Declare the filereader
 	private string line; // Every frame a new line from the file
 
+	public static OpenBCI_FileReader Inst{ get; private set; }
+
+	void Awake()
+	{
+		Inst = this;
+	}
+
 	// Use this for initialization
-	void Start () {
+	void Start () 
+	{
 		file = new System.IO.StreamReader(fileLocation); // Initialize the filereadeer
 		while ((line = file.ReadLine ())[0]=='%') { // Skip the first lines and read the samplerate
 			if(line.Contains ("%Sample Rate = ")){
 				string[] tempSubstrings = line.Split (' ');
 				float.TryParse(tempSubstrings[3],out sampleRate);
-				print (sampleRate);
 			}
 		}
 		for (int i=0; i<skipFirstXSeconds*sampleRate; i++) { // Skip the first x amount of seconds from the file
@@ -30,8 +39,9 @@ public class OpenBCI_FileReader : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-
+	void Update () 
+	{
+		currentData = (sample.channelSample [1] + sample.channelSample [2] + sample.channelSample [3])/3.0f;
 	}
 
 	void FileEEGStream()

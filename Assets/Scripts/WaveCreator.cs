@@ -8,7 +8,6 @@ public class WaveCreator : MonoBehaviour {
 	public Material waveMat;
 
 	public float[] width;
-	public int[] numPoints;
 	public float[] scale;
 	public float[] edge;
 	public float[] height;
@@ -40,23 +39,23 @@ public class WaveCreator : MonoBehaviour {
 
 		waves = new List<MainWaveScript>[3];
 
-		colourSettings.Add (false);
 		colourSettings.Add (true);
 		colourSettings.Add (false);
+		colourSettings.Add (true);
 
 		//Initialize the waves.
 		for (int i = 0; i < 3; ++i) {
 			waves[i] = new List<MainWaveScript>();
 			if(speeds[i] < 0){
 				edgeBounds.Add (edge[i] - width[i]);
-				edgeDests.Add (edge[i] + (numPoints[i] - 1) * width[i]);
+				edgeDests.Add (edge[i] + (WaveData.Inst.numNodes - 1) * width[i]);
 			}
 			else{
-				edgeBounds.Add (edge[i] + (numPoints[i] - 1) * width[i]);
+				edgeBounds.Add (edge[i] + (WaveData.Inst.numNodes - 1) * width[i]);
 				edgeDests.Add (edge[i] - width[i]);
 			}
 
-			for (int j = 0; j < numPoints[i]; ++j) {
+			for (int j = 0; j < WaveData.Inst.numNodes; ++j) {
 
 				MainWaveScript wavePart = (MainWaveScript) Instantiate (wave, new Vector3(edge[i] + j * width[i], height[i], space[i]), Quaternion.identity);
 
@@ -84,13 +83,13 @@ public class WaveCreator : MonoBehaviour {
 			if(speeds[i] < 0 && waves[i][0].transform.position.x < edgeBounds[i])
 				addingEnd = true;
 
-			else if (speeds[i] > 0 && waves[i][numPoints[i] - 1].transform.position.x > edgeBounds[i])
+			else if (speeds[i] > 0 && waves[i][WaveData.Inst.numNodes - 1].transform.position.x > edgeBounds[i])
 				addingFront = true;
 
 			if(addingEnd || addingFront)
 			{
-				int addIndex = (addingEnd) ? numPoints[i] - 1 : 0;
-				int destroyIndex = (addingEnd) ? 0 : numPoints[i] - 1;
+				int addIndex = (addingEnd) ? WaveData.Inst.numNodes - 1 : 0;
+				int destroyIndex = (addingEnd) ? 0 : WaveData.Inst.numNodes - 1;
 				addingEnd = false;
 				addingFront = false;
 
@@ -112,12 +111,21 @@ public class WaveCreator : MonoBehaviour {
 				colourSettings[i] = !colourSettings[i];
 
 				waves[i].Insert (addIndex, wavePart);
-				waves[i][addIndex].SetDest(WaveData.nodePos[numPoints[i] - 1] / amps[i] + height[i]);
+				waves[i][addIndex].SetDest(WaveData.nodePos[WaveData.Inst.numNodes - 1] / amps[i] + height[i]);
 			}
 
 			if(WaveData.updateVel){
-				for(int j = 0; j < numPoints[i]; ++j){
-					waves[i][j].SetDest(WaveData.nodePos[j] / amps[i] + height[i]);
+				if(speeds[i] < 0.0f)
+				{
+					for(int j = 0; j < WaveData.Inst.numNodes; ++j){
+						waves[i][j].SetDest(WaveData.nodePos[j] / amps[i] + height[i]);
+					}
+				}
+				else
+				{
+					for(int j = 0; j < WaveData.Inst.numNodes; ++j){
+						waves[i][j].SetDest(WaveData.reverseNodePos[j] / amps[i] + height[i]);
+					}
 				}
 			}
 		}
