@@ -17,9 +17,9 @@ public class BubbleScript : MonoBehaviour {
 	}
 
 	public void Gen () {
-		float r = Random.Range (0, 255) / 255.0f;
-		float g = Random.Range (0, 255) / 255.0f;
-		float b = Random.Range (0, 255) / 255.0f;
+		float r = Random.Range (200, 255) / 255.0f;
+		float g = Random.Range (200, 255) / 255.0f;
+		float b = Random.Range (220, 255) / 255.0f;
 		renderer.material.color = new Color (r, g, b);
 		scoreAmt = Random.Range (0, 10);
 	}

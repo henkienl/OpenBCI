@@ -14,6 +14,7 @@ public class WaveCreator : MonoBehaviour {
 	public float[] space;
 	public float[] amps;
 	public float[] speeds;
+	public static float[] maxHeights;
 	public Color[] colours;
 
 	private List<float> edgeBounds;
@@ -38,6 +39,11 @@ public class WaveCreator : MonoBehaviour {
 		colourSettings = new List<bool> ();
 
 		waves = new List<MainWaveScript>[3];
+		maxHeights = new float[3];
+
+		for (int i = 0; i < 3; ++i) {
+			maxHeights[i] = (height[i] + scale[i]/2 + WaveData.maxDev / amps[i]);
+				}
 
 		colourSettings.Add (true);
 		colourSettings.Add (false);

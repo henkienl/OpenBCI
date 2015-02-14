@@ -9,6 +9,7 @@ public class WaveData : MonoBehaviour {
 	public float floor;
 	public float baseAdjust;
 	public int numNodes;
+	public static float maxDev;
 	public static List<float> nodePos;
 	public static List<float> reverseNodePos;
 	public static List<float> FFTdata;
@@ -24,6 +25,7 @@ public class WaveData : MonoBehaviour {
 
 	void Start () {
 
+		maxDev = cap / baseAdjust;
 		moveTime = 1.0f;
 		motionTimer = 0.0f;
 		nodePos = new List<float>();
