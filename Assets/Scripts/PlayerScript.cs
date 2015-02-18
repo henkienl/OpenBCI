@@ -6,16 +6,21 @@ public class PlayerScript : MonoBehaviour {
 
 	public float accRate;
 	public float jumpForce;
+	public float maxSpeed;
+
 	public float airLength;
 	public float airHeight;
-	public float airX;
-	public float airY;
-	public float maxSpeed;
-	public float airDrain;
-	public float maxAir;
-	public Vector3 scale;
 	public Texture2D bgAir;
 	public Texture2D fgAir;
+	public float airX;
+	public float airY;
+
+	public float airDrain;
+	public float airDrainScale;
+	public float maxAir;
+
+	public Vector3 scale;
+
 	private bool grounded;
 	private bool jumping;
 	private float jumpTimer;
@@ -44,7 +49,7 @@ public class PlayerScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if (Input.GetAxis ("Horizontal") != 0) 
+		if (!transitioning && Input.GetAxis ("Horizontal") != 0) 
 		{
 			transform.parent = null;
 			float dir = Input.GetAxis ("Horizontal");
@@ -59,7 +64,7 @@ public class PlayerScript : MonoBehaviour {
 				rigidbody.velocity -= new Vector3(100.0f * Time.deltaTime, 0.0f, 0.0f);
 		}
 
-		if (Input.GetButton ("Jump")) 
+		if (!transitioning && Input.GetButton ("Jump")) 
 		{
 			if (grounded) 
 				jumping = true;
@@ -142,6 +147,9 @@ public class PlayerScript : MonoBehaviour {
 		GUI.Box (new Rect (0, 0, airLength, airHeight), fgAir);
 		GUI.EndGroup ();
 		GUI.EndGroup ();
+		GUI.color = new Color (0f, 0f, 0f, 1f);
+		GUI.Label (new Rect (airX + 8.0f, airY + airHeight, 
+		                     100, 20), score.ToString () + " pearls");
 	}
 
 	void OnCollisionEnter (Collision hit) 
@@ -166,14 +174,24 @@ public class PlayerScript : MonoBehaviour {
 	void OnTriggerEnter(Collider hit)
 	{
 
-		if (hit.gameObject.tag == "Reward") 
+		if (hit.gameObject.tag == "Air") 
 		{
-			RewardManager.rewards.RemoveAt (hit.gameObject.GetComponent<BubbleScript> ().rewardIndex);
+			RewardManager.rewards.Remove (hit.gameObject.GetComponent<BubbleScript>());
 			Destroy (hit.gameObject);
 			AdjustAir (hit.gameObject.GetComponent<BubbleScript> ().scoreAmt);
 			print (air);
 				
 		} 
+
+		else if (hit.gameObject.tag == "Reward")
+		{
+			RewardManager.pearls.Remove (hit.gameObject);
+			Destroy (hit.gameObject);
+			++score;
+			airDrain += airDrainScale;
+			RewardManager.Inst.spawnTime *= (1.0f - airDrainScale/5.0f);
+			RewardManager.Inst.pearlSpawnTime *= (1.0f - airDrainScale/5.0f);
+		}
 
 		else if (hit.gameObject.tag == "Death")
 			Destroy (this.gameObject);

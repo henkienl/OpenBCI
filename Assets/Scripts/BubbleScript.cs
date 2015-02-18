@@ -3,7 +3,6 @@ using System.Collections;
 
 public class BubbleScript : MonoBehaviour {
 
-	public int rewardIndex;
 	public int scoreAmt;
 
 	// Use this for initialization

@@ -4,16 +4,31 @@ using System.Collections.Generic;
 
 public class RewardManager : MonoBehaviour {
 
-	float spawnTimer;
+	public float spawnTime;
+	private float spawnTimer;
+
+	public float pearlSpawnTime;
+	private float pearlSpawnTimer;
+
 	public BubbleScript bubble;
+	public GameObject pearl;
 
 	public static List<BubbleScript> rewards;
+	public static List<GameObject> pearls;
 	private List<float> zCoords;
 	private List<float> yCoords;
+
+	public static RewardManager Inst{ get; private set; }
+
+	void Awake()
+	{
+		Inst = this;
+	}
 
 	// Use this for initialization
 	void Start () {
 		rewards = new List<BubbleScript> ();
+		pearls = new List<GameObject> ();
 		zCoords = new List<float> ();
 		yCoords = new List<float> ();
 		for (int i = 0; i < 3; ++i) {
@@ -27,10 +42,11 @@ public class RewardManager : MonoBehaviour {
 	void Update () {
 
 		spawnTimer += Time.deltaTime;
+		pearlSpawnTimer += Time.deltaTime;
 
-		if (spawnTimer > 0.5f) 
+		if (spawnTimer > spawnTime) 
 		{
-			spawnTimer -= 2.0f;
+			spawnTimer -= spawnTime;
 			if (rewards.Count > 10) 
 			{
 				if(rewards[0] != null)
@@ -49,9 +65,24 @@ public class RewardManager : MonoBehaviour {
 			rewards.Add (reward);
 		}
 
-		for(int i = 0; i < rewards.Count; ++i)
+		if (pearlSpawnTimer > pearlSpawnTime) 
 		{
-			rewards[i].rewardIndex = i;
+			pearlSpawnTimer -= pearlSpawnTime;
+			if(pearls.Count > 5)
+			{
+				if(pearls[0] != null)
+					Destroy(pearls[0].gameObject);
+
+				pearls.RemoveAt(0);
+			}
+
+			int p = Random.Range (0, 1000) % 3;
+			float x = Random.Range (-40, 20);
+			float y = Random.Range (yCoords[p*2], yCoords[p*2 + 1]);
+			float z = zCoords[p];
+
+			GameObject reward = (GameObject) Instantiate (pearl, new Vector3 (x, y, z), Quaternion.identity);
+			pearls.Add (reward);
 		}
 	}
 }
