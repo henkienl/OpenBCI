@@ -7,6 +7,7 @@ public class PlayerScript : MonoBehaviour {
 	public float accRate;
 	public float jumpForce;
 	public float maxSpeed;
+	public float maxJump;
 
 	public float airLength;
 	public float airHeight;
@@ -19,11 +20,17 @@ public class PlayerScript : MonoBehaviour {
 	public float airDrainScale;
 	public float maxAir;
 
-	public Vector3 scale;
+	private Vector3 scale;
 
 	private bool grounded;
 	private bool jumping;
+	private bool airJump;
+	private int mod;
+	private float airTime;
+	private float rotVel;
 	private float jumpTimer;
+	private float currentAngle;
+
 	private float transitTime;
 	private bool transitioning;
 	private bool up;
@@ -31,19 +38,27 @@ public class PlayerScript : MonoBehaviour {
 	private Vector3 destCoords;
 	private int layer;
 	private float air;
-	private int score;
+
+	public static int score;
+	public bool testResetHighscore;
 
 	// Use this for initialization
 	void Start () 
 	{
 		jumpTimer = 0.0f;
 		transitTime = 1.0f;
+		mod = 1;
 		score = 0;
+		currentAngle = 0.0f;
+		PlayerPrefs.SetInt ("score", 0);
 		air = maxAir;
 		layer = 1;
 		transitioning = false;
 		grounded = false;
-		jumping = false;
+		jumping = true;
+		scale = transform.localScale;
+		if (testResetHighscore)
+			PlayerPrefs.SetInt ("highscore", 0);
 	}
 	
 	// Update is called once per frame
@@ -51,10 +66,9 @@ public class PlayerScript : MonoBehaviour {
 	{
 		if (!transitioning && Input.GetAxis ("Horizontal") != 0) 
 		{
-			transform.parent = null;
 			float dir = Input.GetAxis ("Horizontal");
-			int mod = (dir > 0) ? -1 : 1;
 
+			mod = (dir > 0) ? -1 : 1;
 			transform.localScale = new Vector3(mod * scale.x, scale.y, scale.z);
 
 			if(dir > 0 && rigidbody.velocity.x < maxSpeed)
@@ -64,28 +78,84 @@ public class PlayerScript : MonoBehaviour {
 				rigidbody.velocity -= new Vector3(100.0f * Time.deltaTime, 0.0f, 0.0f);
 		}
 
+		else if(grounded && Input.GetAxis("Horizontal") == 0)
+		{
+			transform.Translate (WaveCreator.Inst.speeds[layer] * Time.deltaTime, 0.0f, 0.0f);
+		}
+
 		if (!transitioning && Input.GetButton ("Jump")) 
 		{
-			if (grounded) 
+			if (!jumping && grounded)
+			{
 				jumping = true;
+				airJump = false;
+				currentAngle = 0.0f;
+				jumpTimer = 0.0f;
+				rotVel = 0.0f;
+			}
 
 			if (jumping) 
 			{
 				jumpTimer += Time.deltaTime;
 
-				if (jumpTimer > 0.15f) 
+				if (jumpTimer > 0.15f || rigidbody.velocity.y > maxJump) 
 				{
+					if(rigidbody.velocity.y > maxJump)
+						rigidbody.velocity.Set (rigidbody.velocity.x, maxJump, 0.0f);
 					jumpTimer = 0.0f;
 					jumping = false;
+					airTime = -1 * rigidbody.velocity.y / Physics.gravity.y;
+					rotVel = currentAngle / airTime;
+					airJump = true;
 				}
 
 				if (jumping) 
+				{
 					rigidbody.AddForce (0.0f, jumpForce, 0.0f);
+					currentAngle += 5.0f;
+					UpdateAngles ();
+				}
+					
 			}
 		}
 
 		else if (jumping)
+		{
+			if(rigidbody.velocity.y > maxJump)
+				rigidbody.velocity.Set (rigidbody.velocity.x, maxJump, 0.0f);
+			jumpTimer = 0.0f;
 			jumping = false;
+			airTime = -1 * rigidbody.velocity.y / Physics.gravity.y;
+			rotVel = currentAngle / airTime;
+			airJump = true;
+		}
+
+		if(airJump)
+		{
+			jumpTimer += Time.deltaTime;
+			if(jumpTimer < airTime)
+			{
+				currentAngle -= rotVel * Time.deltaTime;
+				if(currentAngle < 0)
+					currentAngle = 0;
+				UpdateAngles ();
+			}
+			else if (currentAngle > -60)
+			{
+				currentAngle -= 1.0f;
+				UpdateAngles ();
+			}
+		}
+
+		if (!airJump && !jumping && currentAngle != 0) 
+		{
+			float temp = currentAngle;
+			float change = (currentAngle < 0) ? (5.0f) : (-5.0f);
+			currentAngle += change;
+			if((currentAngle < 0) != (temp < 0))
+				currentAngle = 0;
+			UpdateAngles ();
+		}
 
 		if (!transitioning && Input.GetButtonDown ("Shift Up") && layer > 0) 
 		{
@@ -147,28 +217,21 @@ public class PlayerScript : MonoBehaviour {
 		GUI.Box (new Rect (0, 0, airLength, airHeight), fgAir);
 		GUI.EndGroup ();
 		GUI.EndGroup ();
-		GUI.color = new Color (0f, 0f, 0f, 1f);
-		GUI.Label (new Rect (airX + 8.0f, airY + airHeight, 
-		                     100, 20), score.ToString () + " pearls");
 	}
 
 	void OnCollisionEnter (Collision hit) 
 	{
-		if (Input.GetAxis ("Horizontal") == 0) 
+		if (!jumping && hit.gameObject.tag == "Ground") 
 		{
-			transform.parent = hit.transform;
-		} 
-		else 
-		{
-			transform.parent = null;
+			grounded = true;
+			airJump = false;
 		}
-		grounded = true;
 	}
 
 	void OnCollisionExit (Collision hit) 
 	{
-		transform.parent = null;
-		grounded = false;
+		if(hit.gameObject.tag == "Ground")
+			grounded = false;
 	}
 
 	void OnTriggerEnter(Collider hit)
@@ -178,28 +241,52 @@ public class PlayerScript : MonoBehaviour {
 		{
 			RewardManager.rewards.Remove (hit.gameObject.GetComponent<BubbleScript>());
 			Destroy (hit.gameObject);
-			AdjustAir (hit.gameObject.GetComponent<BubbleScript> ().scoreAmt);
-			print (air);
-				
+			AdjustAir (hit.gameObject.GetComponent<BubbleScript> ().scoreAmt);				
 		} 
 
 		else if (hit.gameObject.tag == "Reward")
 		{
 			RewardManager.pearls.Remove (hit.gameObject);
+			Destroy (hit.transform.parent.gameObject);
 			Destroy (hit.gameObject);
 			++score;
+			PlayerPrefs.SetInt ("score", PlayerPrefs.GetInt ("score") + 1);
+			PlayerPrefs.Save ();
 			airDrain += airDrainScale;
 			RewardManager.Inst.spawnTime *= (1.0f - airDrainScale/5.0f);
 			RewardManager.Inst.pearlSpawnTime *= (1.0f - airDrainScale/5.0f);
 		}
 
 		else if (hit.gameObject.tag == "Death")
+		{
 			Destroy (this.gameObject);
+		}
 	}
 
 	void OnDestroy()
 	{
+		if (score > PlayerPrefs.GetInt ("highscore")) 
+		{
+			PlayerPrefs.SetInt ("highscore", score);
+			PlayerPrefs.SetInt ("newscore", 1);
+		} 
+
+		else
+			PlayerPrefs.SetInt ("newscore", 0);
+
+		PlayerPrefs.Save ();
+
 		Application.LoadLevel ("GameOver");
+	}
+
+	void UpdateAngles()
+	{
+		Vector3 temp = transform.eulerAngles;
+		if (currentAngle >= 0)
+			temp.z = (mod < 0) ? (currentAngle) : (360.0f - currentAngle);
+		else
+			temp.z = (mod < 0) ? (360.0f + currentAngle) : (-currentAngle);
+		transform.eulerAngles = temp;
 	}
 
 

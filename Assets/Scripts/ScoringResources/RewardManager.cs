@@ -10,6 +10,9 @@ public class RewardManager : MonoBehaviour {
 	public float pearlSpawnTime;
 	private float pearlSpawnTimer;
 
+	public int airCap;
+	public int pearlCap;
+
 	public BubbleScript bubble;
 	public GameObject pearl;
 
@@ -47,7 +50,7 @@ public class RewardManager : MonoBehaviour {
 		if (spawnTimer > spawnTime) 
 		{
 			spawnTimer -= spawnTime;
-			if (rewards.Count > 10) 
+			if (rewards.Count > airCap) 
 			{
 				if(rewards[0] != null)
 					Destroy (rewards[0].gameObject);
@@ -57,7 +60,7 @@ public class RewardManager : MonoBehaviour {
 
 			int p = Random.Range (0, 1000) % 3;
 			float x = Random.Range (-40, 20);
-			float y = Random.Range (yCoords[p*2], yCoords[p*2 + 1]);
+			float y = WaveCreator.minHeights[p] - 2.0f;
 			float z = zCoords[p];
 
 			BubbleScript reward = (BubbleScript) Instantiate (bubble, new Vector3 (x, y, z), Quaternion.identity);
@@ -68,7 +71,7 @@ public class RewardManager : MonoBehaviour {
 		if (pearlSpawnTimer > pearlSpawnTime) 
 		{
 			pearlSpawnTimer -= pearlSpawnTime;
-			if(pearls.Count > 5)
+			if(pearls.Count > pearlCap)
 			{
 				if(pearls[0] != null)
 					Destroy(pearls[0].gameObject);
