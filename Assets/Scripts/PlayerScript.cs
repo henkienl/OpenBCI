@@ -9,6 +9,8 @@ public class PlayerScript : MonoBehaviour {
 	public float maxSpeed;
 	public float maxJump;
 
+	public static bool tutorial;
+
 	public float airLength;
 	public float airHeight;
 	public Texture2D bgAir;
@@ -30,9 +32,11 @@ public class PlayerScript : MonoBehaviour {
 	private float rotVel;
 	private float jumpTimer;
 	private float currentAngle;
+	private float deathTimer;
 
 	private float transitTime;
 	private bool transitioning;
+	private bool falling;
 	private bool up;
 	private Vector3 transitVel;
 	private Vector3 destCoords;
@@ -40,7 +44,7 @@ public class PlayerScript : MonoBehaviour {
 	private float air;
 
 	public static int score;
-	public bool testResetHighscore;
+	public static int bubbles;
 
 	// Use this for initialization
 	void Start () 
@@ -50,15 +54,13 @@ public class PlayerScript : MonoBehaviour {
 		mod = 1;
 		score = 0;
 		currentAngle = 0.0f;
-		PlayerPrefs.SetInt ("score", 0);
 		air = maxAir;
 		layer = 1;
 		transitioning = false;
 		grounded = false;
-		jumping = true;
+		jumping = false;
+		falling = true;
 		scale = transform.localScale;
-		if (testResetHighscore)
-			PlayerPrefs.SetInt ("highscore", 0);
 	}
 	
 	// Update is called once per frame
@@ -140,14 +142,21 @@ public class PlayerScript : MonoBehaviour {
 					currentAngle = 0;
 				UpdateAngles ();
 			}
-			else if (currentAngle > -60)
+			else
+			{
+				falling = true;
+			}
+		}
+		if (falling) 
+		{
+			if (currentAngle > -60)
 			{
 				currentAngle -= 1.0f;
 				UpdateAngles ();
 			}
 		}
 
-		if (!airJump && !jumping && currentAngle != 0) 
+		if (currentAngle != 0 && !falling && !airJump && !jumping && !transitioning) 
 		{
 			float temp = currentAngle;
 			float change = (currentAngle < 0) ? (5.0f) : (-5.0f);
@@ -157,25 +166,25 @@ public class PlayerScript : MonoBehaviour {
 			UpdateAngles ();
 		}
 
-		if (!transitioning && Input.GetButtonDown ("Shift Up") && layer > 0) 
+		if (Input.GetButtonDown ("Shift Up") && layer > 0 && !transitioning && !falling) 
 		{
 			transitioning = true;
 			rigidbody.useGravity = false;
 			rigidbody.isKinematic = true;
 			up = true;
 			--layer;
-			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f, WaveCreator.Inst.space[layer]);
+			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f + 5.0f, WaveCreator.Inst.space[layer]);
 			transitVel = (destCoords - transform.position)/transitTime;
 		}
 
-		else if (!transitioning && Input.GetButtonDown ("Shift Down") && layer < 2) 
+		else if (Input.GetButtonDown ("Shift Down") && layer < 2 && !transitioning && !falling) 
 		{
 			transitioning = true;
 			rigidbody.useGravity = false;
 			rigidbody.isKinematic = true;
 			up = false;
 			++layer;
-			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f, WaveCreator.Inst.space[layer]);
+			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f + 5.0f, WaveCreator.Inst.space[layer]);
 			transitVel = (destCoords - transform.position)/transitTime;
 		}
 
@@ -185,16 +194,28 @@ public class PlayerScript : MonoBehaviour {
 			   || (!up && transform.position.z < destCoords.z))
 			{
 				transitioning = false;
+				falling = true;
 				rigidbody.useGravity = true;
 				rigidbody.isKinematic = false;
-				transform.Translate (0.0f, destCoords.y - transform.position.y, destCoords.z - transform.position.z);
 			}
 
-			else 
+			else
+			{
 				transform.Translate (transitVel * Time.deltaTime);
+			}
 		}
 
-		AdjustAir (-(airDrain * Time.deltaTime));
+		if (!renderer.isVisible) 
+		{
+			deathTimer += Time.deltaTime;
+			if(deathTimer > 0.5f)
+				Destroy (gameObject);
+		}
+		else
+			deathTimer = 0.0f;
+
+		if(!tutorial)
+			AdjustAir (-(airDrain * Time.deltaTime));
 	}
 
 	void AdjustAir(float adj)
@@ -224,6 +245,7 @@ public class PlayerScript : MonoBehaviour {
 		if (!jumping && hit.gameObject.tag == "Ground") 
 		{
 			grounded = true;
+			falling = false;
 			airJump = false;
 		}
 	}
@@ -241,7 +263,8 @@ public class PlayerScript : MonoBehaviour {
 		{
 			RewardManager.rewards.Remove (hit.gameObject.GetComponent<BubbleScript>());
 			Destroy (hit.gameObject);
-			AdjustAir (hit.gameObject.GetComponent<BubbleScript> ().scoreAmt);				
+			AdjustAir (hit.gameObject.GetComponent<BubbleScript> ().scoreAmt);
+			++bubbles;
 		} 
 
 		else if (hit.gameObject.tag == "Reward")
@@ -267,6 +290,7 @@ public class PlayerScript : MonoBehaviour {
 	{
 		if (score > PlayerPrefs.GetInt ("highscore")) 
 		{
+			PlayerPrefs.SetInt ("displayscore", PlayerPrefs.GetInt ("highscore"));
 			PlayerPrefs.SetInt ("highscore", score);
 			PlayerPrefs.SetInt ("newscore", 1);
 		} 

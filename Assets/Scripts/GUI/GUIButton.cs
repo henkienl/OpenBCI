@@ -3,12 +3,17 @@ using System.Collections;
 
 public class GUIButton : MonoBehaviour {
 
-	public enum MenuAction{Play = 0, Menu, Quit};
+	public enum MenuAction{Play = 0, Menu, Quit, Tutorial, ResetScore};
 	public MenuAction action;
 
 	// Use this for initialization
 	void Start () {
 		gameObject.guiText.material.color = GUIManager.Inst.idleButton;
+		if (action == MenuAction.Tutorial) 
+		{
+			gameObject.guiText.text = (PlayerPrefs.GetInt ("tutorial") == 0) ?
+				("tutorial disabled") : ("tutorial enabled");
+		}
 	}
 	
 	// Update is called once per frame
@@ -44,6 +49,16 @@ public class GUIButton : MonoBehaviour {
 			break;
 		case MenuAction.Quit:
 			Application.Quit ();
+			break;
+		case MenuAction.Tutorial:
+			PlayerPrefs.SetInt ("tutorial", (PlayerPrefs.GetInt ("tutorial") == 0) ? 1 : 0);
+			PlayerPrefs.Save ();
+			gameObject.guiText.text = (PlayerPrefs.GetInt ("tutorial") == 0) ? 
+				("tutorial disabled") : ("tutorial enabled");
+			break;
+		case MenuAction.ResetScore:
+			PlayerPrefs.SetInt ("highscore", 0);
+			PlayerPrefs.Save ();
 			break;
 		}
 	}
