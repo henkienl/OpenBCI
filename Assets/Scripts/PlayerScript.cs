@@ -273,11 +273,14 @@ public class PlayerScript : MonoBehaviour {
 			Destroy (hit.transform.parent.gameObject);
 			Destroy (hit.gameObject);
 			++score;
-			PlayerPrefs.SetInt ("score", PlayerPrefs.GetInt ("score") + 1);
-			PlayerPrefs.Save ();
-			airDrain += airDrainScale;
-			RewardManager.Inst.spawnTime *= (1.0f - airDrainScale/5.0f);
-			RewardManager.Inst.pearlSpawnTime *= (1.0f - airDrainScale/5.0f);
+			if(!tutorial)
+			{
+				PlayerPrefs.SetInt ("score", PlayerPrefs.GetInt ("score") + 1);
+				PlayerPrefs.Save ();
+				airDrain += airDrainScale;
+				RewardManager.Inst.spawnTime *= (1.0f - airDrainScale/5.0f);
+				RewardManager.Inst.pearlSpawnTime *= (1.0f - airDrainScale/5.0f);
+			}
 		}
 
 		else if (hit.gameObject.tag == "Death")

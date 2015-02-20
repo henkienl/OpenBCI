@@ -65,6 +65,7 @@ public class RewardManager : MonoBehaviour {
 
 			BubbleScript reward = (BubbleScript) Instantiate (bubble, new Vector3 (x, y, z), Quaternion.identity);
 			reward.Gen ();
+			reward.layer = p;
 			rewards.Add (reward);
 		}
 
