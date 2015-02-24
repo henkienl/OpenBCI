@@ -9,6 +9,8 @@ public class PlayerScript : MonoBehaviour {
 	public float maxSpeed;
 	public float maxJump;
 
+	public Xbox360Controller controller;
+
 	public static bool tutorial;
 
 	public float airLength;
@@ -66,7 +68,7 @@ public class PlayerScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if (!transitioning && Input.GetAxis ("Horizontal") != 0) 
+		if (!transitioning && Input.GetAxis ("Horizontal") != 0)
 		{
 			float dir = Input.GetAxis ("Horizontal");
 
@@ -85,7 +87,8 @@ public class PlayerScript : MonoBehaviour {
 			transform.Translate (WaveCreator.Inst.speeds[layer] * Time.deltaTime, 0.0f, 0.0f);
 		}
 
-		if (!transitioning && Input.GetButton ("Jump")) 
+		if (!transitioning && (Input.GetButton ("Jump")
+		    || controller.IsButtonDown(Xbox360ControllerPlugin.BtnA ())))
 		{
 			if (!jumping && grounded)
 			{
@@ -166,7 +169,9 @@ public class PlayerScript : MonoBehaviour {
 			UpdateAngles ();
 		}
 
-		if (Input.GetButtonDown ("Shift Up") && layer > 0 && !transitioning && !falling) 
+		if (((Input.GetButtonDown ("Shift Up")
+		      ||controller.IsButtonDown (Xbox360ControllerPlugin.BtnY()))
+		    && layer > 0 && !transitioning && !falling))
 		{
 			transitioning = true;
 			rigidbody.useGravity = false;
@@ -177,7 +182,9 @@ public class PlayerScript : MonoBehaviour {
 			transitVel = (destCoords - transform.position)/transitTime;
 		}
 
-		else if (Input.GetButtonDown ("Shift Down") && layer < 2 && !transitioning && !falling) 
+		else if (((Input.GetButtonDown ("Shift Down") 
+		          ||controller.IsButtonDown(Xbox360ControllerPlugin.BtnB()))
+		         && layer < 2 && !transitioning && !falling)) 
 		{
 			transitioning = true;
 			rigidbody.useGravity = false;

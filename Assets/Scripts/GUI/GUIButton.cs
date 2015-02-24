@@ -6,6 +6,10 @@ public class GUIButton : MonoBehaviour {
 	public enum MenuAction{Play = 0, Menu, Quit, Tutorial, ResetScore};
 	public MenuAction action;
 
+	public bool hoverFlag;
+	public bool selectFlag;
+	public bool pressing;
+
 	// Use this for initialization
 	void Start () {
 		gameObject.guiText.material.color = GUIManager.Inst.idleButton;
@@ -23,20 +27,40 @@ public class GUIButton : MonoBehaviour {
 
 	void OnMouseEnter()
 	{
-		gameObject.guiText.material.color = GUIManager.Inst.hoverButton;
+		hoverFlag = true;
 	}
 
 	void OnMouseExit()
 	{
-		gameObject.guiText.material.color = GUIManager.Inst.idleButton;
+		hoverFlag = false;
 	}
 
 	void OnMouseDown()
 	{
-		gameObject.guiText.material.color = GUIManager.Inst.pressButton;
+		selectFlag = true;
 	}
 
 	void OnMouseUp()
+	{
+		pressing = true;
+	}
+
+	public void Active()
+	{
+		gameObject.guiText.material.color = GUIManager.Inst.hoverButton;
+	}
+
+	public void Inactive()
+	{
+		gameObject.guiText.material.color = GUIManager.Inst.idleButton;
+	}
+
+	public void Press()
+	{
+		gameObject.guiText.material.color = GUIManager.Inst.pressButton;
+	}
+
+	public void Select()
 	{
 		gameObject.guiText.material.color = GUIManager.Inst.hoverButton;
 		switch (action) 
@@ -46,6 +70,7 @@ public class GUIButton : MonoBehaviour {
 			break;
 		case MenuAction.Menu:
 			Application.LoadLevel ("MainMenu");
+
 			break;
 		case MenuAction.Quit:
 			Application.Quit ();

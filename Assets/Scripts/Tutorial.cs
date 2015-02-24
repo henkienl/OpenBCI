@@ -9,6 +9,7 @@ public class Tutorial : MonoBehaviour {
 	public float fadeTime;
 	public float fadeInTime;
 	public float msgTime;
+	public Xbox360Controller controller;
 
 	private Stage stage;
 	private Color temp;
@@ -54,7 +55,8 @@ public class Tutorial : MonoBehaviour {
 
 		case Stage.Jump:
 
-			if(Input.GetButton ("Jump"))
+			if(Input.GetButton ("Jump") 
+			   || controller.IsButtonDown(Xbox360ControllerPlugin.BtnA ()))
 				advancing = true;
 
 			break;
@@ -72,7 +74,9 @@ public class Tutorial : MonoBehaviour {
 		case Stage.WaveSwitch:
 
 			if(Input.GetButton ("Shift Up")
-			   || Input.GetButton ("Shift Down"))
+			   || Input.GetButton ("Shift Down")
+			   || controller.IsButtonDown (Xbox360ControllerPlugin.BtnY ())
+			   || controller.IsButtonDown(Xbox360ControllerPlugin.BtnB ()))
 				advancing = true;
 
 			break;
@@ -123,12 +127,12 @@ public class Tutorial : MonoBehaviour {
 
 		case Stage.Move:
 
-			gameObject.guiText.text = "use the a and d keys to move";
+			gameObject.guiText.text = "use the a and d keys\nor left stick to move";
 			break;
 
 		case Stage.Jump:
 
-			gameObject.guiText.text = "use the spacebar to jump";
+			gameObject.guiText.text = "use the spacebar or A button to jump";
 			break;
 
 		case Stage.Fall:
@@ -139,7 +143,7 @@ public class Tutorial : MonoBehaviour {
 
 		case Stage.WaveSwitch:
 
-			gameObject.guiText.text = "use the w and s keys to move between waves";
+			gameObject.guiText.text = "use the w and s keys or Y and B buttons\n to move between waves";
 			break;
 
 		case Stage.CollectPearls:
