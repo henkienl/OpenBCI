@@ -8,7 +8,7 @@ public class WaveData : MonoBehaviour {
 	public bool useLive;
 	public float cap;
 	public float floor;
-	public float baseAdjust;
+	private float baseAdjust;
 	public float baseAdd;
 	public int numNodes;
 	public static float maxDev;
@@ -27,6 +27,7 @@ public class WaveData : MonoBehaviour {
 
 	void Start () {
 
+		baseAdjust = cap / 125.0f;
 		maxDev = cap / baseAdjust;
 		moveTime = 1.0f;
 		motionTimer = 0.0f;
