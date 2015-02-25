@@ -39,8 +39,7 @@ public class OpenBCI_FileReader : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		print (currentData);
-		currentData = (sample.channelSample [1] + sample.channelSample [2] + sample.channelSample [3])/3.0f;
+
 	}
 
 	void FileEEGStream()
@@ -50,16 +49,15 @@ public class OpenBCI_FileReader : MonoBehaviour {
 			string[] tempSubstrings = line.Split (','); // Split into parts
 			short sampleId; // The id of the sample
 			short.TryParse (tempSubstrings [0], out sampleId);
-			int[] channelSample = new int[(tempSubstrings.Length - 4)]; // convert to channeldata
-			for (int i = 1; i<(tempSubstrings.Length-3); i++) {
-					int.TryParse (tempSubstrings [i], out channelSample [i - 1]);
+			float[] channelSample = new float[8]; // convert to channeldata
+			for (int i = 0; i<8; i++) {
+					float.TryParse (tempSubstrings [i+1], out channelSample [i]);
 			}
-			short[] accelData = new short[3]; // convert to accelerometer data
-			for (int i = (tempSubstrings.Length-3); i<=(tempSubstrings.Length-3); i++) {
-					short.TryParse (tempSubstrings [i], out accelData [i - (tempSubstrings.Length - 3)]);
+			float[] accelData = new float[3]; // convert to accelerometer data
+			for (int i = 0; i<3; i++) {
+					float.TryParse (tempSubstrings [i+9], out accelData [i]);
 			}
 			sample = new OpenBCI_Sample (sampleId, channelSample, accelData); // Put result in new sample object
-			//print (sample.ToString ());
 			if(sampleRate>1f)Thread.Sleep ((int)(1000/sampleRate)); // Wait to stream according to samplerate
 		}
 	}

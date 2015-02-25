@@ -82,7 +82,7 @@ public class OpenBCIConnection : MonoBehaviour
 				tempByteArrayToShort[0]=sampleByteArray [1];
 				tempByteArrayToShort[1]=(byte)0x00;
 				short sampleId = System.BitConverter.ToInt16(tempByteArrayToShort, 0); // The id of the sample
-				int[] channelSample = new int[8]; // convert the 3rd to 26th byte to channeldata (24bit signed MSB first)
+				float[] channelSample = new float[8]; // convert the 3rd to 26th byte to channeldata (24bit signed MSB first)
 				for (int i = 0; i<8; i++) {
 					byte[] tempByteArrayToInt = new byte[4];
 					tempByteArrayToInt[0] = sampleByteArray[4+(i*3)];
@@ -93,11 +93,11 @@ public class OpenBCIConnection : MonoBehaviour
 					{
 						tempByteArrayToInt[3]=(byte)0xFF;
 					}
-					channelSample[i]=System.BitConverter.ToInt32(tempByteArrayToInt, 0);
+					channelSample[i]=(System.BitConverter.ToInt32(tempByteArrayToInt, 0))*0.02235f; //scale factor of 0.02235 microVolts per count
 				}
-				short[] accelData = new short[3]; // convert 27th to 32nd byte to accelerometer data (16bit signed MSB first)
+				float[] accelData = new float[3]; // convert 27th to 32nd byte to accelerometer data (16bit signed MSB first)
 				for (int i = 0; i<3; i++) {
-					accelData[i]=System.BitConverter.ToInt16(sampleByteArray, 26+(i*2));
+					accelData[i]=(System.BitConverter.ToInt16(sampleByteArray, 26+(i*2)))*0.02235f; //scale factor of 0.02235 microVolts per count
 				}
 				sample = new OpenBCI_Sample (sampleId, channelSample, accelData); // Put result in new sample object
 				//print (sample.ToString ());
