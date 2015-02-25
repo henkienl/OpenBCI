@@ -38,10 +38,13 @@ public class OpenBCI_FileReader : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-
+	void Update () 
+	{
+		currentData = sample.channelSample [1] - sample.channelSample [0];
+		print ("electrode: " + sample.channelSample [1]);
+		print ("referecne: " + sample.channelSample [0]);
+		print ("difference: " + currentData);
 	}
-
 	void FileEEGStream()
 	{
 		while (true) { // The new thread should be running all the time

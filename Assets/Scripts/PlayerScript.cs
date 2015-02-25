@@ -68,6 +68,49 @@ public class PlayerScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+		if (((Input.GetButtonDown ("Shift Up")
+		      ||controller.IsButtonDown (Xbox360ControllerPlugin.BtnY()))
+		     && layer > 0 && !transitioning && !falling))
+		{
+			transitioning = true;
+			rigidbody.useGravity = false;
+			rigidbody.isKinematic = true;
+			up = true;
+			--layer;
+			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f + 5.0f, WaveCreator.Inst.space[layer]);
+			transitVel = (destCoords - transform.position)/transitTime;
+		}
+		
+		else if (((Input.GetButtonDown ("Shift Down") 
+		           ||controller.IsButtonDown(Xbox360ControllerPlugin.BtnB()))
+		          && layer < 2 && !transitioning && !falling)) 
+		{
+			transitioning = true;
+			rigidbody.useGravity = false;
+			rigidbody.isKinematic = true;
+			up = false;
+			++layer;
+			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f + 5.0f, WaveCreator.Inst.space[layer]);
+			transitVel = (destCoords - transform.position)/transitTime;
+		}
+		
+		if (transitioning) 
+		{
+			if((up && transform.position.z > destCoords.z)
+			   || (!up && transform.position.z < destCoords.z))
+			{
+				transitioning = false;
+				falling = true;
+				rigidbody.useGravity = true;
+				rigidbody.isKinematic = false;
+			}
+			
+			else
+			{
+				transform.Translate (transitVel * Time.deltaTime);
+			}
+		}
+
 		if (!transitioning && Input.GetAxis ("Horizontal") != 0)
 		{
 			float dir = Input.GetAxis ("Horizontal");
@@ -168,50 +211,7 @@ public class PlayerScript : MonoBehaviour {
 				currentAngle = 0;
 			UpdateAngles ();
 		}
-
-		if (((Input.GetButtonDown ("Shift Up")
-		      ||controller.IsButtonDown (Xbox360ControllerPlugin.BtnY()))
-		    && layer > 0 && !transitioning && !falling))
-		{
-			transitioning = true;
-			rigidbody.useGravity = false;
-			rigidbody.isKinematic = true;
-			up = true;
-			--layer;
-			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f + 5.0f, WaveCreator.Inst.space[layer]);
-			transitVel = (destCoords - transform.position)/transitTime;
-		}
-
-		else if (((Input.GetButtonDown ("Shift Down") 
-		          ||controller.IsButtonDown(Xbox360ControllerPlugin.BtnB()))
-		         && layer < 2 && !transitioning && !falling)) 
-		{
-			transitioning = true;
-			rigidbody.useGravity = false;
-			rigidbody.isKinematic = true;
-			up = false;
-			++layer;
-			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f + 5.0f, WaveCreator.Inst.space[layer]);
-			transitVel = (destCoords - transform.position)/transitTime;
-		}
-
-		if (transitioning) 
-		{
-			if((up && transform.position.z > destCoords.z)
-			   || (!up && transform.position.z < destCoords.z))
-			{
-				transitioning = false;
-				falling = true;
-				rigidbody.useGravity = true;
-				rigidbody.isKinematic = false;
-			}
-
-			else
-			{
-				transform.Translate (transitVel * Time.deltaTime);
-			}
-		}
-
+		
 		if (!renderer.isVisible) 
 		{
 			deathTimer += Time.deltaTime;

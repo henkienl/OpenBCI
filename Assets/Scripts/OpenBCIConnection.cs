@@ -11,7 +11,10 @@ public class OpenBCIConnection : MonoBehaviour
 	private SerialPort sp;
 	Thread myThread; // The seperate thread for handling the connection
 	private byte[] sampleByteArray= new byte[34]; // The incoming data
-	
+
+	public static OpenBCIConnection Inst{get; private set;}
+	public float currentData;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -62,7 +65,10 @@ public class OpenBCIConnection : MonoBehaviour
 
 	void Update()
 	{
-
+		currentData = sample.channelSample [1] - sample.channelSample [0];
+		print ("electrode: " + sample.channelSample [1]);
+		print ("reference: " + sample.channelSample [0]);
+		print ("difference: " + currentData);
 	}
 
 	void ReadIncomingData()

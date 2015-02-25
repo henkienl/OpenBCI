@@ -5,9 +5,11 @@ using System.Collections.Generic;
 public class WaveData : MonoBehaviour {
 
 	public static float moveTime;
+	public bool useLive;
 	public float cap;
 	public float floor;
 	public float baseAdjust;
+	public float baseAdd;
 	public int numNodes;
 	public static float maxDev;
 	public static List<float> nodePos;
@@ -54,11 +56,19 @@ public class WaveData : MonoBehaviour {
 			motionTimer -= moveTime;
 
 			//Bind the new sample in the max range and scale for displacement.
-			float newPos = OpenBCI_FileReader.Inst.currentData;
+
+			float newPos = 0.0f;
+
+			if(useLive)
+				newPos = OpenBCIConnection.Inst.currentData;
+			else
+				newPos = OpenBCI_FileReader.Inst.currentData;
+
+			newPos += baseAdd;
+
 			if(newPos > cap || newPos < floor)
-			{
 				newPos = (newPos > cap) ? cap : floor;
-			}
+
 			newPos /= baseAdjust;
 
 			nodePos.RemoveAt (numNodes - 1);
