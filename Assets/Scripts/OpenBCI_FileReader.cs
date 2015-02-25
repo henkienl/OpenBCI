@@ -12,6 +12,14 @@ public class OpenBCI_FileReader : MonoBehaviour {
 	System.IO.StreamReader file; // Declare the filereader
 	private string line; // Every frame a new line from the file
 
+	public float currentData;
+	public static OpenBCI_FileReader Inst{ get; private set; }
+
+	void Awake()
+	{
+		Inst = this;
+	}
+
 	// Use this for initialization
 	void Start () {
 		file = new System.IO.StreamReader(fileLocation); // Initialize the filereadeer
@@ -31,7 +39,8 @@ public class OpenBCI_FileReader : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+		print (currentData);
+		currentData = (sample.channelSample [1] + sample.channelSample [2] + sample.channelSample [3])/3.0f;
 	}
 
 	void FileEEGStream()
