@@ -15,6 +15,11 @@ public class OpenBCIConnection : MonoBehaviour
 	public static OpenBCIConnection Inst{get; private set;}
 	public float currentData;
 
+	void Awake()
+	{
+		Inst = this;
+	}
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -40,7 +45,7 @@ public class OpenBCIConnection : MonoBehaviour
 			{
 				sp.Open(); // opens the connection
 				sp.ReadTimeout = int.MaxValue; // sets the timeout value before reporting error
-				//print("Port Opened!");
+				print("Port Opened!");
 			}
 		}
 		else
@@ -99,14 +104,14 @@ public class OpenBCIConnection : MonoBehaviour
 					{
 						tempByteArrayToInt[3]=(byte)0xFF;
 					}
-					channelSample[i]=(System.BitConverter.ToInt32(tempByteArrayToInt, 0))*0.02235f; //scale factor of 0.02235 microVolts per count
+					channelSample[i]=(System.BitConverter.ToInt32(tempByteArrayToInt, 0))*22.35f; //scale factor of 0.02235 microVolts per count
 				}
 				float[] accelData = new float[3]; // convert 27th to 32nd byte to accelerometer data (16bit signed MSB first)
 				for (int i = 0; i<3; i++) {
-					accelData[i]=(System.BitConverter.ToInt16(sampleByteArray, 26+(i*2)))*0.02235f; //scale factor of 0.02235 microVolts per count
+					accelData[i]=(System.BitConverter.ToInt16(sampleByteArray, 26+(i*2)))*22.35f; //scale factor of 0.02235 microVolts per count
 				}
 				sample = new OpenBCI_Sample (sampleId, channelSample, accelData); // Put result in new sample object
-				//print (sample.ToString ());
+				print (sample.ToString ());
 
 			}
 			else if(byteCounter > 32) byteCounter=0; // Footer not found, reset counter
