@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class FishSpawner : MonoBehaviour {
 
 	public float spawnTime;
+	public float maxFish;
 	public GameObject fish;
 
 	private float spawnTimer;
@@ -44,7 +45,7 @@ public class FishSpawner : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		spawnTimer += Time.deltaTime;
-		if (spawnTimer > spawnTime && activeFish.Count < 6) 
+		if (spawnTimer > spawnTime && activeFish.Count < maxFish) 
 		{
 			spawnTimer -= spawnTime;
 			SpawnFish();

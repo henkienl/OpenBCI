@@ -43,6 +43,7 @@ public class GUIButton : MonoBehaviour {
 	void OnMouseUp()
 	{
 		pressing = true;
+		selectFlag = false;
 	}
 
 	public void Active()
@@ -86,5 +87,6 @@ public class GUIButton : MonoBehaviour {
 			PlayerPrefs.Save ();
 			break;
 		}
+		pressing = false;
 	}
 }

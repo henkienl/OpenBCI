@@ -41,9 +41,9 @@ public class OpenBCI_FileReader : MonoBehaviour {
 	void Update () 
 	{
 		currentData = sample.channelSample [1] - sample.channelSample [0];
-		print ("electrode: " + sample.channelSample [1]);
-		print ("referecne: " + sample.channelSample [0]);
-		print ("difference: " + currentData);
+		//print ("electrode: " + sample.channelSample [1]);
+		//print ("referecne: " + sample.channelSample [0]);
+		//print ("difference: " + currentData);
 	}
 	void FileEEGStream()
 	{

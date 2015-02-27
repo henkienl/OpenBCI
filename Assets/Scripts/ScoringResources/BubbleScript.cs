@@ -17,8 +17,11 @@ public class BubbleScript : MonoBehaviour {
 		rigidbody.velocity += new Vector3(0.0f, velAcc, 0.0f) * Time.deltaTime;
 		if (transform.position.y > WaveCreator.maxHeights [layer] + 4.0f) 
 			velAcc += 0.02f;
-		if (!this.renderer.isVisible)
+		if (!this.renderer.isVisible) 
+		{
+			RewardManager.rewards.Remove (this);
 			Destroy (this.gameObject);
+		}
 	}
 
 	public void Gen () {

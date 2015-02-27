@@ -65,6 +65,8 @@ public class WaveData : MonoBehaviour {
 			else
 				newPos = OpenBCI_FileReader.Inst.currentData;
 
+			print("Raw: " + newPos);
+
 			newPos += baseAdd;
 
 			if(newPos > cap || newPos < floor)
@@ -76,6 +78,7 @@ public class WaveData : MonoBehaviour {
 			nodePos.Insert (0, newPos);
 			reverseNodePos.RemoveAt (0);
 			reverseNodePos.Insert (numNodes - 1, newPos);
+			print("Transformed: " + newPos);
 
 				} 
 
