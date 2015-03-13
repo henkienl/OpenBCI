@@ -26,6 +26,7 @@ public class OpenBCIConnection : MonoBehaviour
 		sp = new SerialPort("COM"+COM_Port, 115200, Parity.None, 8, StopBits.One); // Initialize the connection
 		OpenConnection(); // Make the connection
 		myThread = new Thread(new ThreadStart(ReadIncomingData)); // Init the connection thread
+		myThread.IsBackground = true; // Makes the thread close when the foreground application stops
 		myThread.Start(); // Start thread
 	}
 	
