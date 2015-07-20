@@ -71,12 +71,12 @@ public class WaveCreator : MonoBehaviour {
 				wavePart.transform.localScale = new Vector3(width[i] + 0.001f, scale[i], 1.0f);
 				wavePart.xSpeed = speeds[i];
 
-				wavePart.renderer.material = waveMat;
+				wavePart.GetComponent<Renderer>().material = waveMat;
 				if(j % 2 == 0){
-					wavePart.renderer.material.color = colours[i * 2];
+					wavePart.GetComponent<Renderer>().material.color = colours[i * 2];
 				}
 				else{
-					wavePart.renderer.material.color = colours[i * 2 + 1];
+					wavePart.GetComponent<Renderer>().material.color = colours[i * 2 + 1];
 				}
 
 				waves[i].Add (wavePart);
@@ -110,12 +110,12 @@ public class WaveCreator : MonoBehaviour {
 				wavePart.transform.localScale = new Vector3(width[i] + 0.001f, scale[i], 1.0f);
 				wavePart.xSpeed = speeds[i];
 				
-				wavePart.renderer.material = waveMat;
+				wavePart.GetComponent<Renderer>().material = waveMat;
 				if(colourSettings[i]){
-					wavePart.renderer.material.color = colours[i * 2];
+					wavePart.GetComponent<Renderer>().material.color = colours[i * 2];
 				}
 				else{
-					wavePart.renderer.material.color = colours[i * 2 + 1];
+					wavePart.GetComponent<Renderer>().material.color = colours[i * 2 + 1];
 				}
 				colourSettings[i] = !colourSettings[i];
 

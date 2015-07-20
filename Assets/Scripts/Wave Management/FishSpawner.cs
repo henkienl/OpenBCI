@@ -53,7 +53,7 @@ public class FishSpawner : MonoBehaviour {
 		deletingFish = false;
 		for (int i = 0; i < activeFish.Count; ++i) 
 		{
-			if(activeFish[i].renderer.isVisible)
+			if(activeFish[i].GetComponent<Renderer>().isVisible)
 				visFish[i] = true;
 			else if(visFish[i])
 			{

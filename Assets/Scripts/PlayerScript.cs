@@ -73,8 +73,8 @@ public class PlayerScript : MonoBehaviour {
 		     && layer > 0 && !transitioning && !falling))
 		{
 			transitioning = true;
-			rigidbody.useGravity = false;
-			rigidbody.isKinematic = true;
+			GetComponent<Rigidbody>().useGravity = false;
+			GetComponent<Rigidbody>().isKinematic = true;
 			up = true;
 			--layer;
 			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f + 5.0f, WaveCreator.Inst.space[layer]);
@@ -86,8 +86,8 @@ public class PlayerScript : MonoBehaviour {
 		          && layer < 2 && !transitioning && !falling)) 
 		{
 			transitioning = true;
-			rigidbody.useGravity = false;
-			rigidbody.isKinematic = true;
+			GetComponent<Rigidbody>().useGravity = false;
+			GetComponent<Rigidbody>().isKinematic = true;
 			up = false;
 			++layer;
 			destCoords = new Vector3(0.0f, WaveCreator.maxHeights[layer] + transform.localScale.y / 2.0f + 5.0f, WaveCreator.Inst.space[layer]);
@@ -101,8 +101,8 @@ public class PlayerScript : MonoBehaviour {
 			{
 				transitioning = false;
 				falling = true;
-				rigidbody.useGravity = true;
-				rigidbody.isKinematic = false;
+				GetComponent<Rigidbody>().useGravity = true;
+				GetComponent<Rigidbody>().isKinematic = false;
 			}
 			
 			else
@@ -118,11 +118,11 @@ public class PlayerScript : MonoBehaviour {
 			mod = (dir > 0) ? -1 : 1;
 			transform.localScale = new Vector3(mod * scale.x, scale.y, scale.z);
 
-			if(dir > 0 && rigidbody.velocity.x < maxSpeed)
-				rigidbody.velocity += new Vector3(100.0f * Time.deltaTime, 0.0f, 0.0f);
+			if(dir > 0 && GetComponent<Rigidbody>().velocity.x < maxSpeed)
+				GetComponent<Rigidbody>().velocity += new Vector3(100.0f * Time.deltaTime, 0.0f, 0.0f);
 
-			else if(dir < 0 && rigidbody.velocity.x > -maxSpeed)
-				rigidbody.velocity -= new Vector3(100.0f * Time.deltaTime, 0.0f, 0.0f);
+			else if(dir < 0 && GetComponent<Rigidbody>().velocity.x > -maxSpeed)
+				GetComponent<Rigidbody>().velocity -= new Vector3(100.0f * Time.deltaTime, 0.0f, 0.0f);
 		}
 
 		else if(grounded && Input.GetAxis("Horizontal") == 0)
@@ -146,20 +146,20 @@ public class PlayerScript : MonoBehaviour {
 			{
 				jumpTimer += Time.deltaTime;
 
-				if (jumpTimer > 0.15f || rigidbody.velocity.y > maxJump) 
+				if (jumpTimer > 0.15f || GetComponent<Rigidbody>().velocity.y > maxJump) 
 				{
-					if(rigidbody.velocity.y > maxJump)
-						rigidbody.velocity.Set (rigidbody.velocity.x, maxJump, 0.0f);
+					if(GetComponent<Rigidbody>().velocity.y > maxJump)
+						GetComponent<Rigidbody>().velocity.Set (GetComponent<Rigidbody>().velocity.x, maxJump, 0.0f);
 					jumpTimer = 0.0f;
 					jumping = false;
-					airTime = -1 * rigidbody.velocity.y / Physics.gravity.y;
+					airTime = -1 * GetComponent<Rigidbody>().velocity.y / Physics.gravity.y;
 					rotVel = currentAngle / airTime;
 					airJump = true;
 				}
 
 				if (jumping) 
 				{
-					rigidbody.AddForce (0.0f, jumpForce, 0.0f);
+					GetComponent<Rigidbody>().AddForce (0.0f, jumpForce, 0.0f);
 					currentAngle += 5.0f;
 					UpdateAngles ();
 				}
@@ -169,11 +169,11 @@ public class PlayerScript : MonoBehaviour {
 
 		else if (jumping)
 		{
-			if(rigidbody.velocity.y > maxJump)
-				rigidbody.velocity.Set (rigidbody.velocity.x, maxJump, 0.0f);
+			if(GetComponent<Rigidbody>().velocity.y > maxJump)
+				GetComponent<Rigidbody>().velocity.Set (GetComponent<Rigidbody>().velocity.x, maxJump, 0.0f);
 			jumpTimer = 0.0f;
 			jumping = false;
-			airTime = -1 * rigidbody.velocity.y / Physics.gravity.y;
+			airTime = -1 * GetComponent<Rigidbody>().velocity.y / Physics.gravity.y;
 			rotVel = currentAngle / airTime;
 			airJump = true;
 		}
@@ -212,7 +212,7 @@ public class PlayerScript : MonoBehaviour {
 			UpdateAngles ();
 		}
 		
-		if (!renderer.isVisible) 
+		if (!GetComponent<Renderer>().isVisible) 
 		{
 			deathTimer += Time.deltaTime;
 			if(deathTimer > 0.5f)

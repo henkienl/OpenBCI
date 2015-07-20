@@ -8,11 +8,11 @@ public class Highscore : MonoBehaviour {
 	{
 
 		if (PlayerPrefs.GetInt ("newscore") == 0)
-			gameObject.guiText.text = "highscore : " + PlayerPrefs.GetInt ("highscore");
+			gameObject.GetComponent<GUIText>().text = "highscore : " + PlayerPrefs.GetInt ("highscore");
 				
 		else 
 		{
-			gameObject.guiText.text = "new highscore : " + PlayerPrefs.GetInt ("highscore") + "\n"
+			gameObject.GetComponent<GUIText>().text = "new highscore : " + PlayerPrefs.GetInt ("highscore") + "\n"
 				+ "old highscore : " + PlayerPrefs.GetInt ("displayscore");
 		}
 

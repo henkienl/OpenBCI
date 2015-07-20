@@ -120,53 +120,53 @@ public class Tutorial : MonoBehaviour {
 		fadeInTimer = 0.0f;
 		fadeIn = true;
 
-		gameObject.guiText.color = new Color (1.0f, 1.0f, 1.0f, 0.0f);
+		gameObject.GetComponent<GUIText>().color = new Color (1.0f, 1.0f, 1.0f, 0.0f);
 
 		switch (stage) 
 		{
 
 		case Stage.Move:
 
-			gameObject.guiText.text = "use the a and d keys\nor left stick to move";
+			gameObject.GetComponent<GUIText>().text = "use the a and d keys\nor left stick to move";
 			break;
 
 		case Stage.Jump:
 
-			gameObject.guiText.text = "use the spacebar or A button to jump";
+			gameObject.GetComponent<GUIText>().text = "use the spacebar or A button to jump";
 			break;
 
 		case Stage.Fall:
 
 			msgTimer = 0.0f;
-			gameObject.guiText.text = "don't get swept off the screen";
+			gameObject.GetComponent<GUIText>().text = "don't get swept off the screen";
 			break;
 
 		case Stage.WaveSwitch:
 
-			gameObject.guiText.text = "use the w and s keys or Y and B buttons\n to move between waves";
+			gameObject.GetComponent<GUIText>().text = "use the w and s keys or Y and B buttons\n to move between waves";
 			break;
 
 		case Stage.CollectPearls:
 
 			scoreCheck = PlayerScript.score;
-			gameObject.guiText.text = "collect pink pearls to increase your score";
+			gameObject.GetComponent<GUIText>().text = "collect pink pearls to increase your score";
 			break;
 
 		case Stage.CollectAir:
 
 			airCheck = PlayerScript.bubbles;
-			gameObject.guiText.text = "collect bubbles to preserve your air";
+			gameObject.GetComponent<GUIText>().text = "collect bubbles to preserve your air";
 			break;
 
 		case Stage.AirGauge:
 
 			msgTimer = 0.0f;
-			gameObject.guiText.text = "run out of air and it's game over";
+			gameObject.GetComponent<GUIText>().text = "run out of air and it's game over";
 			break;
 
 		default:
 
-			gameObject.guiText.text = "";
+			gameObject.GetComponent<GUIText>().text = "";
 			break;
 		}
 	}
@@ -182,9 +182,9 @@ public class Tutorial : MonoBehaviour {
 			return;
 		}
 
-		temp = gameObject.guiText.color;
+		temp = gameObject.GetComponent<GUIText>().color;
 		temp.a = (fadeTime - fadeTimer) / fadeTime;
-		gameObject.guiText.color = temp;
+		gameObject.GetComponent<GUIText>().color = temp;
 	}
 
 	void DoFadeIn()
@@ -198,8 +198,8 @@ public class Tutorial : MonoBehaviour {
 			if(fadeInTime == 0)
 				return;
 		}
-		temp = gameObject.guiText.color;
+		temp = gameObject.GetComponent<GUIText>().color;
 		temp.a = fadeInTimer / fadeInTime;
-		gameObject.guiText.color = temp;
+		gameObject.GetComponent<GUIText>().color = temp;
 	}
 }

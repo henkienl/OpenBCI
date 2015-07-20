@@ -10,6 +10,6 @@ public class ScoreKeeper : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		guiText.text = PlayerScript.score.ToString ();
+		GetComponent<GUIText>().text = PlayerScript.score.ToString ();
 	}
 }
