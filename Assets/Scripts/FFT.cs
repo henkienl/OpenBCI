@@ -3,13 +3,13 @@ using System.Collections;
 
 public class OpenBCI_FFT : MonoBehaviour {
 
-	Thread myThread; // The seperate thread for FFT
+	Thread FftThread; // The seperate thread for FFT
 
 	// Use this for initialization
 	void Start () {
-		myThread = new Thread(new ThreadStart(ReadIncomingData)); // Init the FFT thread
-		myThread.IsBackground = true; // Makes the thread close when the foreground application stops
-		myThread.Start(); // Start thread
+		FftThread = new Thread(new ThreadStart(FFT)); // Init the FFT thread
+		FftThread.IsBackground = true; // Makes the thread close when the foreground application stops
+		FftThread.Start(); // Start thread
 	}
 	
 	// Update is called once per frame
