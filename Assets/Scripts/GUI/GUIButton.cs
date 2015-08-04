@@ -44,6 +44,7 @@ public class GUIButton : MonoBehaviour {
 	{
 		pressing = true;
 		selectFlag = false;
+		Select ();
 	}
 
 	public void Active()
@@ -71,7 +72,6 @@ public class GUIButton : MonoBehaviour {
 			break;
 		case MenuAction.Menu:
 			Application.LoadLevel ("MainMenu");
-
 			break;
 		case MenuAction.Quit:
 			Application.Quit ();

@@ -8,7 +8,6 @@ public class GUIManager : MonoBehaviour {
 	public Color hoverButton;
 	public Color pressButton;
 
-	public Xbox360Controller controller;
 	public static int selected;
 	int horControl;
 	bool horRestrict;
@@ -32,17 +31,10 @@ public class GUIManager : MonoBehaviour {
 		verControl = 0;
 		horRestrict = false;
 		verRestrict = false;
-
-		waitFlag = controller.IsButtonDown (Xbox360ControllerPlugin.BtnA ())
-				   || controller.ButtonPressed (Xbox360ControllerPlugin.BtnB ());
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
-		if(waitFlag)
-			waitFlag = controller.IsButtonDown(Xbox360ControllerPlugin.BtnA ())
-				|| controller.IsButtonDown (Xbox360ControllerPlugin.BtnB ());
 
 		horControl = (int)Input.GetAxis ("Horizontal");
 		verControl = (int)Input.GetAxis ("Vertical");
@@ -81,15 +73,5 @@ public class GUIManager : MonoBehaviour {
 			else
 				buttons[i].Inactive ();
 		}
-
-		if (!waitFlag && (controller.ButtonPressed (Xbox360ControllerPlugin.BtnA ())
-		    || controller.ButtonPressed (Xbox360ControllerPlugin.BtnB ())
-		    || buttons[selected].selectFlag))
-			buttons [selected].Press ();
-
-		if (!waitFlag && (controller.ButtonReleased (Xbox360ControllerPlugin.BtnA ())
-		    || controller.ButtonPressed(Xbox360ControllerPlugin.BtnB ()))
-		    || buttons[selected].pressing)
-			buttons [selected].Select ();
 	}
 }

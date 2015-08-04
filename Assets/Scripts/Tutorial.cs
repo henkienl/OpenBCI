@@ -9,7 +9,6 @@ public class Tutorial : MonoBehaviour {
 	public float fadeTime;
 	public float fadeInTime;
 	public float msgTime;
-	public Xbox360Controller controller;
 
 	private Stage stage;
 	private Color temp;
@@ -55,8 +54,7 @@ public class Tutorial : MonoBehaviour {
 
 		case Stage.Jump:
 
-			if(Input.GetButton ("Jump") 
-			   || controller.IsButtonDown(Xbox360ControllerPlugin.BtnA ()))
+			if(Input.GetButton ("Jump"))
 				advancing = true;
 
 			break;
@@ -74,9 +72,7 @@ public class Tutorial : MonoBehaviour {
 		case Stage.WaveSwitch:
 
 			if(Input.GetButton ("Shift Up")
-			   || Input.GetButton ("Shift Down")
-			   || controller.IsButtonDown (Xbox360ControllerPlugin.BtnY ())
-			   || controller.IsButtonDown(Xbox360ControllerPlugin.BtnB ()))
+			   || Input.GetButton ("Shift Down"))
 				advancing = true;
 
 			break;
